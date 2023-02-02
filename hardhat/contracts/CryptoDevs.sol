@@ -96,4 +96,36 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         tokenIds += 1;
         _safeMint(msg.sender, tokenIds);
     }
+
+    /**
+     * @dev _baseURI overides the Openzeppelin's ERC721 implementation which by default
+     * returned an empty string for the baseURI
+     */
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    /**
+     * @dev setPaused makes the contract paused or unpaused
+     */
+    function setPaused(bool val) public onlyOwner {
+        _paused = val;
+    }
+
+    /**
+     * @dev withdraw sends all the ether in the contract
+     * to the owner of the contract
+     */
+    function withdraw() public onlyOwner {
+        address _owner = owner();
+        uint256 amount = address(this).balance;
+        (bool sent, ) = _owner.call{value: amount}("");
+        require(sent, "Failed to send Ether");
+    }
+
+    // Function to receive Ether. msg.data must be empty
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
 }
