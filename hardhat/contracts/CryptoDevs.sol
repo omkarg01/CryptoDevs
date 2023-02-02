@@ -82,4 +82,8 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         // If the address being minted to is not a contract, it works the same way as _mint
         _safeMint(msg.sender, tokenIds);
     }
+
+    
+
+
 }
