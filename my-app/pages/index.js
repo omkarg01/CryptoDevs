@@ -192,6 +192,24 @@ export default function Home() {
         }
     };
 
-    
+    /**
+   * getTokenIdsMinted: gets the number of tokenIds that have been minted
+   */
+    const getTokenIdsMinted = async () => {
+        try {
+            // Get the provider from web3Modal, which in our case is MetaMask
+            // No need for the Signer here, as we are only reading state from the blockchain
+            const provider = await getProviderOrSigner();
+            // We connect to the Contract using a Provider, so we will only
+            // have read-only access to the Contract
+            const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, provider);
+            // call the tokenIds from the contract
+            const _tokenIds = await nftContract.tokenIds();
+            //_tokenIds is a `Big Number`. We need to convert the Big Number to a string
+            setTokenIdsMinted(_tokenIds.toString());
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
 }
