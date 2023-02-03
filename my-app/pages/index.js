@@ -136,4 +136,36 @@ export default function Home() {
         }
     };
 
+    /**
+   * checkIfPresaleEnded: checks if the presale has ended by quering the `presaleEnded`
+   * variable in the contract
+   */
+    const checkIfPresaleEnded = async () => {
+        try {
+            // Get the provider from web3Modal, which in our case is MetaMask
+            // No need for the Signer here, as we are only reading state from the blockchain
+            const provider = await getProviderOrSigner();
+            // We connect to the Contract using a Provider, so we will only
+            // have read-only access to the Contract
+            const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, provider);
+            // call the presaleEnded from the contract
+            const _presaleEnded = await nftContract.presaleEnded();
+            // _presaleEnded is a Big Number, so we are using the lt(less than function) instead of `<`
+            // Date.now()/1000 returns the current time in seconds
+            // We compare if the _presaleEnded timestamp is less than the current time
+            // which means presale has ended
+            const hasEnded = _presaleEnded.lt(Math.floor(Date.now() / 1000));
+            if (hasEnded) {
+                setPresaleEnded(true);
+            } else {
+                setPresaleEnded(false);
+            }
+            return hasEnded;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    };
+
+
 }
