@@ -74,6 +74,66 @@ export default function Home() {
         }
     };
 
+    /*
+    *  connectWallet: Connects the MetaMask wallet
+    */
+    const connectWallet = async () => {
+        try {
+            // Get the provider from web3Modal, which in our case is MetaMask
+            // When used for the first time, it prompts the user to connect their wallet
+            await getProviderOrSigner();
+            setWalletConnected(true);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
+    /**
+   * startPresale: starts the presale for the NFT Collection
+   */
+    const startPresale = async () => {
+        try {
+            // We need a Signer here since this is a 'write' transaction.
+            const signer = await getProviderOrSigner(true);
+            // Create a new instance of the Contract with a Signer, which allows
+            // update methods
+            const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer);
+            // call the startPresale from the contract
+            const tx = await nftContract.startPresale();
+            setLoading(true);
+            // wait for the transaction to get mined
+            await tx.wait();
+            setLoading(false);
+            // set the presale started to true
+            await checkIfPresaleStarted();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    /**
+   * checkIfPresaleStarted: checks if the presale has started by quering the `presaleStarted`
+   * variable in the contract
+   */
+    const checkIfPresaleStarted = async () => {
+        try {
+            // Get the provider from web3Modal, which in our case is MetaMask
+            // No need for the Signer here, as we are only reading state from the blockchain
+            const provider = await getProviderOrSigner();
+            // We connect to the Contract using a Provider, so we will only
+            // have read-only access to the Contract
+            const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, provider);
+            // call the presaleStarted from the contract
+            const _presaleStarted = await nftContract.presaleStarted();
+            if (!_presaleStarted) {
+                await getOwner();
+            }
+            setPresaleStarted(_presaleStarted);
+            return _presaleStarted;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    };
 
 }
