@@ -1,4 +1,5 @@
 import { Contract, providers, utils } from "ethers";
+// import { ethers } from 'ethers';
 import Head from "next/head";
 import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
@@ -228,6 +229,8 @@ export default function Home() {
         // Connect to Metamask
         // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
         const provider = await web3ModalRef.current.connect();
+        // console.log(ethers.AbstractProvider);
+        // console.log("ethers.providers", ethers.providers)
         const web3Provider = new providers.Web3Provider(provider);
 
         // If user is not connected to the Goerli network, let them know and throw an error
@@ -367,7 +370,7 @@ export default function Home() {
                     {renderButton()}
                 </div>
                 <div>
-                    <img className={styles.image} src="./cryptodevs/0.svg" />
+                    <img className={styles.image} src="./cryptodevs/15.svg" />
                 </div>
             </div>
 
@@ -375,6 +378,5 @@ export default function Home() {
                 Made with &#10084; by Crypto Devs
             </footer>
         </div>
-    )
-
+    );
 }
